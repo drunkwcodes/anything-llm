@@ -341,3 +341,82 @@ model system_prompt_variables {
 
   @@index([userId])
 }
+
+model Organization {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  groups      Group[]
+  departments Department[]
+}
+
+model Department {
+  id          String    @id @default(cuid())
+  name        String
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // 關聯到組織
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  
+  groups      Group[]
+  workspaces  Workspace[]    // 部門可以有多個工作區
+
+  @@index([organizationId])
+}
+
+// 修改 Workspace model
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // 改為關聯到部門
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+
+  // 保留現有的關聯
+  // workspaceChats WorkspaceChat[]
+  // documents      Document[]
+
+  @@index([departmentId])
+}
+
+model Group {
+  id             String    @id @default(cuid())
+  name           String
+  description    String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  organizationId String
+  organization   Organization @relation(fields: [organizationId], references: [id])
+  departmentId   String?
+  department     Department?  @relation(fields: [departmentId], references: [id])
+  
+  members        GroupMember[]
+
+  @@index([organizationId])
+  @@index([departmentId])
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  username  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  group     Group    @relation(fields: [groupId], references: [id])
+
+  @@unique([groupId, username])
+  @@index([groupId])
+  @@index([username])
+}
