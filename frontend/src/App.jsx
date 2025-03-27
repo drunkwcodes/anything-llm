@@ -17,6 +17,8 @@ import { PfpProvider } from "./PfpContext";
 import { LogoProvider } from "./LogoContext";
 import { FullScreenLoader } from "./components/Preloader";
 import { ThemeProvider } from "./ThemeContext";
+import OrganizationManagement from './pages/Admin/Organization';
+import DepartmentManagement from './pages/Admin/Organization/Departments';
 
 const Main = lazy(() => import("@/pages/Main"));
 const InvitePage = lazy(() => import("@/pages/Invite"));
@@ -251,6 +253,8 @@ export default function App() {
                     path="/settings/community-hub/import-item"
                     element={<AdminRoute Component={CommunityHubImportItem} />}
                   />
+                  <Route path="/admin/organizations" element={<OrganizationManagement />} />
+                  <Route path="/admin/organization/:organizationId/departments" element={<DepartmentManagement />} />
                 </Routes>
                 <ToastContainer />
               </I18nextProvider>

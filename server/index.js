@@ -27,6 +27,8 @@ const { experimentalEndpoints } = require("./endpoints/experimental");
 const { browserExtensionEndpoints } = require("./endpoints/browserExtension");
 const { communityHubEndpoints } = require("./endpoints/communityHub");
 const { agentFlowEndpoints } = require("./endpoints/agentFlows");
+const organizationRoutes = require('./endpoints/organization');
+const departmentRoutes = require('./endpoints/department');
 const app = express();
 const apiRouter = express.Router();
 const FILE_LIMIT = "3GB";
@@ -69,6 +71,12 @@ embeddedEndpoints(apiRouter);
 
 // Externally facing browser extension endpoints
 browserExtensionEndpoints(apiRouter);
+
+// 註冊組織相關路由
+app.use('/api', organizationRoutes);
+
+// 註冊部門相關路由
+app.use('/api', departmentRoutes);
 
 if (process.env.NODE_ENV !== "development") {
   const { MetaGenerator } = require("./utils/boot/MetaGenerator");
